@@ -298,9 +298,3 @@ backend/
   ```
 - **Integration**: Verify `localStorage` stores `token` and `user` for `keepLoggedIn`.
 
-## Future Enhancements
-- Add password-based authentication.
-- Implement note editing in `Dashboard.tsx` with a `NoteEditForm.tsx` component.
-- Add logging (e.g., Winston) or monitoring (e.g., Sentry) for backend errors.
-- Set up CI/CD with GitHub Actions for automated deployments.
-- Optimize Render’s free tier sleep delays with a paid plan.
