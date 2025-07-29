@@ -25,7 +25,15 @@ for (const envVar of requiredEnvVars) {
 }
 
 // Middleware
-app.use(cors());
+// CORS configuration to allow only the Vercel frontend URL
+const corsOptions = {
+  origin: process.env.FRONTEND_URL, // Replace with your actual Vercel frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+  credentials: true, // Allow cookies or auth headers (if needed for Google OAuth)
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(passport.initialize());
 
