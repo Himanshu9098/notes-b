@@ -158,7 +158,7 @@ router.get('/google/callback', (req: Request, res: Response, next: NextFunction)
   const keepLoggedIn = req.query.keepLoggedIn === 'true';
   passport.authenticate('google', { session: false }, (err: any, userObj: any) => {
     if (err || !userObj || !userObj.token) {
-      return res.redirect('http://localhost:5173/signin?error=Google%20authentication%20failed');
+      return res.redirect(`${process.env.FRONTEND_URL}/signin?error=Google%20authentication%20failed`);
     }
     const user = userObj.user;
     const token = userObj.token;
@@ -167,7 +167,7 @@ router.get('/google/callback', (req: Request, res: Response, next: NextFunction)
       email: user.email,
       name: user.name,
     }));
-    res.redirect(`http://localhost:5173/dashboard?token=${token}&user=${userData}`);
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}&user=${userData}`);
   })(req, res, next);
 });
 
