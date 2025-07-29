@@ -1,4 +1,3 @@
-
 import { Router, Request, Response, NextFunction } from 'express';
 import passport from 'passport';
 import { User } from '../models/User';
@@ -32,6 +31,7 @@ router.post('/register', async (req: Request, res: Response) => {
       userId: user._id,
       otp,
       expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+      createdAt: new Date(), // Explicitly set for clarity
     });
     await otpDoc.save();
 
@@ -73,11 +73,13 @@ router.post('/otp/send', async (req: Request, res: Response) => {
     // Enforce 30-second cooldown for OTP requests
     const recentOtp = await OTP.findOne({
       userId,
-      expiresAt: { $gt: new Date(Date.now() - 30 * 1000) },
+      createdAt: { $gt: new Date(Date.now() - 30 * 1000) }, // OTPs created in last 30 seconds
     });
     if (recentOtp) {
+      const timeElapsed = Date.now() - recentOtp.createdAt.getTime();
+      const remainingSeconds = Math.ceil((30 * 1000 - timeElapsed) / 1000);
       return res.status(429).json({
-        message: `Please wait ${Math.ceil((recentOtp.expiresAt.getTime() - Date.now() + 30 * 1000) / 1000)} seconds before requesting another OTP`,
+        message: `Please wait ${remainingSeconds} seconds before requesting another OTP`,
       });
     }
 
@@ -86,12 +88,13 @@ router.post('/otp/send', async (req: Request, res: Response) => {
       userId,
       otp,
       expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+      createdAt: new Date(), // Explicitly set for clarity
     });
     await otpDoc.save();
 
     await sendEmail({
       to: email,
-      subject: `Your OTP for ${action === 'signup' ? 'Registration' : 'Login'}`,
+      subject: `Your OTP for HD account ${action === 'signup' ? 'Registration' : 'Login'}`,
       text: `Your OTP is ${otp}. It is valid for 10 minutes.`,
     });
 
